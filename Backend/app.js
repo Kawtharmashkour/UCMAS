@@ -1,14 +1,22 @@
 //npm install express
 const express = require('express');
 const app = express();
+const morgan = require('morgan'); // middleware library for logging
 
 // To use environment var. from .env file
 // npm install dotenv
 require('dotenv/config');
 const api = process.env.API_URL;
 
+// Middleware
+//Middleware in Express.js, is a function that has access to the request object (req), the response object (res),
+//it is used to modularize and enhance the functionality of the application. Middleware functions can be added to the application's request processing pipeline using the app.use() method, 
+//where they are executed sequentially for each incoming HTTP request.
+app.use(express.json());
+app.use(morgan('tiny'));
+
 // routes
-app.get('/', (req, res) => {
+app.get(`${api}/user`, (req, res) => {
     res.send('Hello API');
 });
 app.listen(3000, ()=> {
