@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan'); // middleware library for logging
+const mongoose = require('mongoose');
 
 // To use environment var. from .env file
 // npm install dotenv
@@ -19,6 +20,17 @@ app.use(morgan('tiny'));
 app.get(`${api}/user`, (req, res) => {
     res.send('Hello API');
 });
+
+// Database connection
+mongoose.connect(process.env.DB_CONNECTION_STR)
+.then(()=> {
+    console.log('Database connected successfuly');
+})
+.catch((err)=> {
+    console.log(err);
+});
+
+// run the server
 app.listen(3000, ()=> {
     //call back func. after server creation successfuly
     console.log(api);
