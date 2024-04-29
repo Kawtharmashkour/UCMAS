@@ -14,15 +14,29 @@
     min-height: 100vh;
 }
 .row{
-    width: 900px;
-    height: 550px;
+    width: 1300px;
+    height: 700px;
     border-radius: 10px;
     background: #fff;
     box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.2);
 }
 
+.logo img{
+    width: 300px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.girl img{
+    width: 400px;
+    position: absolute;
+    top: 200px;
+    left: 100px;
+}
+
 .side-image{
-    background-image: url("../Assets/logo.webp");
+    background-color: #59d5e0;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -32,14 +46,14 @@
 
 .text{
     position: absolute;
-    top: 50%;
+    top: 85%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .text p{
-    color: #fff;
-    font-size: 18px;
+    color:rgba(114,115,118,1);
+    font-size: 25px;
 }
 
 .right{
@@ -56,6 +70,7 @@
 
 .input-box header{
     font-weight: 700;
+    font-size: 30px;
     text-align: center;
     margin-bottom: 45px;
 }
