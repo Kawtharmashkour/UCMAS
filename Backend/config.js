@@ -2,15 +2,6 @@ const mongoose = require('mongoose');
 require('dotenv/config');
 const api = process.env.API_URL;
 
-/*const connect = mongoose.connect("mongodb://KAWTHAR'S ORG - 2024-04-28/UCMAS");
-
-connect.then(() => {
-    console.log("Database connected successfully!");
-})
-.catch(() =>{
-    console.log("Database cannot be connected");
-});*/
-
 mongoose.connect(process.env.DB_CONNECTION_STR)
 .then(()=> {
     console.log('Database connected successfuly');
