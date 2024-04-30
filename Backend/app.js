@@ -5,6 +5,11 @@ const morgan = require('morgan'); // middleware library for logging
 const mongoose = require('mongoose');
 const path = require('path');
 
+//DB Schemas
+const User = require('./models/user');
+const Program = require('./models/program');
+const Course = require('./models/course');
+
 // To use environment var. from .env file
 // npm install dotenv
 require('dotenv/config');
@@ -23,9 +28,15 @@ app.get('/', (req, res) => {
 });
 
 // routes
-app.get(`${api}/user`, (req, res) => {
-    res.send('Hello API');
-});
+const courseRouters = require('./routers/course');
+const programRouters = require('./routers/program');
+
+app.use(`${api}/course`, courseRouters);
+app.use(`${api}/program`, programRouters);
+
+// app.get(`${api}/user`, (req, res) => {
+//     res.send('Hello API');
+// });
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STR)
@@ -36,9 +47,8 @@ mongoose.connect(process.env.DB_CONNECTION_STR)
     console.log(err);
 });
 
-// run the server
+// run the server for development
 app.listen(3000, ()=> {
     //call back func. after server creation successfuly
-    console.log(api);
     console.log('Server running on local host with port 3000')
 });
