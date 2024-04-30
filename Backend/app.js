@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan'); // middleware library for logging
 const mongoose = require('mongoose');
+const path = require('path');
 
 //DB Schemas
 const User = require('./models/user');
@@ -20,6 +21,11 @@ const api = process.env.API_URL;
 //where they are executed sequentially for each incoming HTTP request.
 app.use(express.json());
 app.use(morgan('tiny'));
+
+app.use(express.static(path.join(__dirname, '..', 'Public')));
+app.get('/', (req, res) => {
+    res.sendFile('index.html', { root: 'Public' });
+});
 
 // routes
 const courseRouters = require('./routers/course');
