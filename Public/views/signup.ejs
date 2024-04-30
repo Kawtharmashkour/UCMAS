@@ -24,33 +24,33 @@
                      </div>
             </div>
             <div class="col-md-6 right">
-                     <form class="input-box">
+                     <form class="input-box" action="/signup" method="post">
                        <header> Sign Up</header>
                        <div class="input-field">
-                           <input type="text" class="input" id="FirstName" required autocomplete="off">
-                           <label for="FirstName"> First Name</label>
-                       </div>
-                           <div class="input-field">
-                           <input type="text" class="input" id="LastName" required autocomplete="off">
-                           <label for="LastName"> Last Name</label>
-                       </div>
-                       <div class="input-field">
-                            <input type="text" class="input" id="email" required autocomplete="off">
-                            <label for="email"> Email</label>
-                       </div>
-                       <div class="input-field">
-                            <input type="password" class="input" id="password" required autocomplete="off">
-                            <label for="password"> Password</label>
-                       </div>
-                       <div class="input-field">
-                            <input type="password" class="input" id="confirmPassword" required autocomplete="off">
-                            <label for="confirmPassword"> Confirm Password</label>
-                       </div>
+                        <input type="text" class="input" name="firstName" id="firstName" required autocomplete="off">
+                        <label for="firstName"> First Name</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" class="input" name="lastName" id="lastName" required autocomplete="off">
+                        <label for="lastName"> Last Name</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" class="input" name="email" id="email" required autocomplete="off">
+                        <label for="email"> Email</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="input" name="password" id="password" required autocomplete="off">
+                        <label for="password"> Password</label>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="input" name="confirmPassword" id="confirmPassword" required autocomplete="off">
+                        <label for="confirmPassword"> Confirm Password</label>
+                    </div>
                        <div class = "input-group mb-3">
                             <input class="btn btn-primary w-100 fs-6" type="submit" value="Sign Up">
                        </div>
                        <div class="signin">
-                        <span>Already have an account? <a href="login.html">Sign In Here</a></span>
+                        <span>Already have an account? <a href="/">Sign In Here</a></span>
                        </div>
                      </form>
             </div>
