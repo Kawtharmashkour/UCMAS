@@ -2,10 +2,13 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan'); // middleware library for logging
-//const mongoose = require('mongoose');
-const collection = require("./config");
+const mongoose = require('mongoose');
+//const collection = require("./config");
 const path = require('path');
 const bcrypt = require('bcrypt');
+
+//static file
+app.use(express.static(path.join(__dirname, '..', 'Public')));
 
 //DB Schemas
 const User = require('./models/user');
@@ -14,7 +17,8 @@ const Course = require('./models/course');
 
 // To use environment var. from .env file
 // npm install dotenv
-require('dotenv/config');
+//require('dotenv/config');
+require('dotenv').config();
 const api = process.env.API_URL;
 
 // Middleware
@@ -23,9 +27,8 @@ const api = process.env.API_URL;
 //where they are executed sequentially for each incoming HTTP request.
 app.use(express.json()); //convert data into json format
 app.use(morgan('tiny'));
-app.use(express.urlencoded({extended: false}));
-//static file
-app.use(express.static(path.join(__dirname, '..', 'Public')));
+app.use(express.urlencoded({extended: true}));
+
 
 
 //use EJS as the view engine
@@ -33,7 +36,7 @@ app.set('views', path.join(__dirname, '..', 'Public', 'views'));
 app.set('view engine', 'ejs');
 
 
-app.get("/", (req,res) => {
+/*app.get("/", (req,res) => {
     res.render("login");
 })
 
@@ -43,16 +46,6 @@ app.get("/signup", (req,res) => {
 
 
 //Register user
-/*app.post("/signup", async (req,res) =>{
-    const data = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password
-    }
-    const userdata = await collection.insertMany(data);
-    console.log(userdata);
-})*/
 app.post('/signup', async (req, res) => {
     console.log(req.body);
     try {
@@ -67,26 +60,32 @@ app.post('/signup', async (req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-});
+});*/
+
 // routes
 const courseRouters = require('./routers/course');
 const programRouters = require('./routers/program');
+const userRouters = require('./routers/user');
 
 app.use(`${api}/course`, courseRouters);
 app.use(`${api}/program`, programRouters);
+app.use(`${api}/user`, userRouters);
 
+app.get('/', (req, res) => {
+    res.render('index');  // Ensure you have an index.ejs file in your views directory
+})
 // app.get(`${api}/user`, (req, res) => {
 //     res.send('Hello API');
 // });
 
 // Database connection
-/*mongoose.connect(process.env.DB_CONNECTION_STR)
+mongoose.connect(process.env.DB_CONNECTION_STR)
 .then(()=> {
     console.log('Database connected successfuly');
 })
 .catch((err)=> {
     console.log(err);
-});*/
+});
 
 // run the server for development
 app.listen(3000, ()=> {
