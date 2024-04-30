@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Form submission intercepted");
         
         let valid = true;
-        const firstName = document.getElementById('FirstName').value.trim();
-        const lastName = document.getElementById('LastName').value.trim();
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
