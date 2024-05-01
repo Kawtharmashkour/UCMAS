@@ -3,12 +3,23 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan'); // middleware library for logging
 const mongoose = require('mongoose');
-//const collection = require("./config");
 const path = require('path');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 //static file
 app.use(express.static(path.join(__dirname, '..', 'Public')));
+
+//session
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true if serving over HTTPS, false if not
+        maxAge: 3600000 // Sets the cookie expiry time; here it's set to 1 hour
+    }
+}));
 
 //DB Schemas
 const User = require('./models/user');
@@ -29,38 +40,10 @@ app.use(express.json()); //convert data into json format
 app.use(morgan('tiny'));
 app.use(express.urlencoded({extended: true}));
 
-
-
 //use EJS as the view engine
 app.set('views', path.join(__dirname, '..', 'Public', 'views'));
 app.set('view engine', 'ejs');
 
-
-/*app.get("/", (req,res) => {
-    res.render("login");
-})
-
-app.get("/signup", (req,res) => {
-    res.render("signup");
-})
-
-
-//Register user
-app.post('/signup', async (req, res) => {
-    console.log(req.body);
-    try {
-        const newUser = new collection({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: req.body.password  
-        });
-        await newUser.save();
-        res.status(201).send("User created successfully");
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});*/
 
 // routes
 const courseRouters = require('./routers/course');
@@ -74,6 +57,16 @@ app.use(`${api}/user`, userRouters);
 app.get('/', (req, res) => {
     res.render('index');  // Ensure you have an index.ejs file in your views directory
 })
+
+// Dashboard route
+app.get('/dashboard', (req, res) => {
+    if (req.session && req.session.user) {
+        res.render('dashboard', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
+
 // app.get(`${api}/user`, (req, res) => {
 //     res.send('Hello API');
 // });
