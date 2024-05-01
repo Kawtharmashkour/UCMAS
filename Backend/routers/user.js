@@ -12,18 +12,26 @@ router.get("/login", (req,res) => {
 router.post("/login", async (req, res) => {
     try {
         const email = req.body.email.trim();
-        console.log("Searching for user with email:", req.body.email);
-        const user = await User.findOne({ email: req.body.email });
+        console.log("Searching for user with email:", email);
+        const user = await User.findOne({ email: email });
         console.log("User found:", user);
         if (!user) {
-            return res.status(404).send("User account cannot be found."); // Provide HTTP status code for clarity
+            return res.status(404).send("User account cannot be found.");
         }
 
         // Compare the hash password from the database with the plain text
         const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
         if (isPasswordMatch) {
             req.session.user = user;  // Store user information in session
-            res.redirect('/dashboard');  // Redirect to a dashboard or home page
+
+            // Check user role and redirect accordingly
+            if (user.userType === 'student') {
+                res.redirect('/dashboard');  // Redirect to student dashboard
+            } else if (user.userType === 'teacher') {
+                res.redirect('/dashboardTeacher');  // Redirect to teacher dashboard
+            } else {
+                res.redirect('/dashboard');  // Default redirect if role is not specified
+            }
         } else {
             res.status(401).send("Incorrect password"); // Use HTTP 401 for incorrect credentials
         }
@@ -51,6 +59,7 @@ router.post('/signup', async (req, res) => {
         // If no existing user was found, proceed to create a new user
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = new User({
+            userType: req.body.userType,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,

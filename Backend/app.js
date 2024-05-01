@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
     res.render('index');  // Ensure you have an index.ejs file in your views directory
 })
 
-// Dashboard route
+// dashboard route
 app.get('/dashboard', (req, res) => {
     if (req.session && req.session.user) {
         res.render('dashboard', { user: req.session.user });
@@ -66,6 +66,16 @@ app.get('/dashboard', (req, res) => {
         res.status(401).send('Access denied. Please login to view this page.');
     }
 });
+
+// dashboardTeacher Route
+app.get('/dashboardTeacher', (req, res) => {
+    if (req.session && req.session.user && req.session.user.userType === 'teacher') {
+        res.render('dashboardTeacher', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
+
 
 // app.get(`${api}/user`, (req, res) => {
 //     res.send('Hello API');
