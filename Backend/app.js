@@ -54,6 +54,7 @@ app.use(`${api}/course`, courseRouters);
 app.use(`${api}/program`, programRouters);
 app.use(`${api}/user`, userRouters);
 
+// index rounte
 app.get('/', (req, res) => {
     res.render('index');  // Ensure you have an index.ejs file in your views directory
 })
