@@ -2,10 +2,24 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan'); // middleware library for logging
-//const mongoose = require('mongoose');
-const collection = require("./config");
+const mongoose = require('mongoose');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+
+//static file
+app.use(express.static(path.join(__dirname, '..', 'Public')));
+
+//session
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true if serving over HTTPS, false if not
+        maxAge: 3600000 // Sets the cookie expiry time; here it's set to 1 hour
+    }
+}));
 
 //DB Schemas
 const User = require('./models/user');
@@ -14,7 +28,8 @@ const Course = require('./models/course');
 
 // To use environment var. from .env file
 // npm install dotenv
-require('dotenv/config');
+//require('dotenv/config');
+require('dotenv').config();
 const api = process.env.API_URL;
 
 // Middleware
@@ -23,70 +38,58 @@ const api = process.env.API_URL;
 //where they are executed sequentially for each incoming HTTP request.
 app.use(express.json()); //convert data into json format
 app.use(morgan('tiny'));
-app.use(express.urlencoded({extended: false}));
-//static file
-app.use(express.static(path.join(__dirname, '..', 'Public')));
-
+app.use(express.urlencoded({extended: true}));
 
 //use EJS as the view engine
 app.set('views', path.join(__dirname, '..', 'Public', 'views'));
 app.set('view engine', 'ejs');
 
 
-app.get("/", (req,res) => {
-    res.render("login");
-})
-
-app.get("/signup", (req,res) => {
-    res.render("signup");
-})
-
-
-//Register user
-/*app.post("/signup", async (req,res) =>{
-    const data = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password
-    }
-    const userdata = await collection.insertMany(data);
-    console.log(userdata);
-})*/
-app.post('/signup', async (req, res) => {
-    console.log(req.body);
-    try {
-        const newUser = new collection({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: req.body.password  
-        });
-        await newUser.save();
-        res.status(201).send("User created successfully");
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
 // routes
 const courseRouters = require('./routers/course');
 const programRouters = require('./routers/program');
+const userRouters = require('./routers/user');
 
 app.use(`${api}/course`, courseRouters);
 app.use(`${api}/program`, programRouters);
+app.use(`${api}/user`, userRouters);
+
+// index rounte
+app.get('/', (req, res) => {
+    res.render('index');  // Ensure you have an index.ejs file in your views directory
+})
+
+// dashboard route
+app.get('/dashboard', (req, res) => {
+    if (req.session && req.session.user) {
+        res.render('dashboard', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
+
+// dashboardTeacher Route
+app.get('/dashboardTeacher', (req, res) => {
+    if (req.session && req.session.user && req.session.user.userType === 'teacher') {
+        res.render('dashboardTeacher', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
+
 
 // app.get(`${api}/user`, (req, res) => {
 //     res.send('Hello API');
 // });
 
 // Database connection
-/*mongoose.connect(process.env.DB_CONNECTION_STR)
+mongoose.connect(process.env.DB_CONNECTION_STR)
 .then(()=> {
     console.log('Database connected successfuly');
 })
 .catch((err)=> {
     console.log(err);
-});*/
+});
 
 // run the server for development
 app.listen(3000, ()=> {
