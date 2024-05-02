@@ -6,13 +6,14 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const flash = require('connect-flash');
 
 //static file
 app.use(express.static(path.join(__dirname, '..', 'Public')));
 
 //session
 app.use(session({
-    secret: 'your_secret_key',
+    secret: 'secretkey',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -20,6 +21,8 @@ app.use(session({
         maxAge: 3600000 // Sets the cookie expiry time; here it's set to 1 hour
     }
 }));
+app.use(flash());
+
 
 //DB Schemas
 const User = require('./models/user');
@@ -72,6 +75,15 @@ app.get('/dashboard', (req, res) => {
 app.get('/dashboardTeacher', (req, res) => {
     if (req.session && req.session.user && req.session.user.userType === 'teacher') {
         res.render('dashboardTeacher', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
+
+// dashboardTeacher Route
+app.get('/dashboardAdmin', (req, res) => {
+    if (req.session && req.session.user && req.session.user.userType === 'admin') {
+        res.render('dashboardAdmin', { user: req.session.user });
     } else {
         res.status(401).send('Access denied. Please login to view this page.');
     }
