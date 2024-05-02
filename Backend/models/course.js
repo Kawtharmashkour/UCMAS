@@ -28,7 +28,19 @@ const courseSchema = mongoose.Schema({
         required : true,
         min : 3,
         max : 5
-        }
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
+    students: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }) 
 
 courseSchema.virtual('id').get(function(){

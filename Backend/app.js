@@ -77,10 +77,14 @@ app.get('/dashboardTeacher', (req, res) => {
     }
 });
 
-
-// app.get(`${api}/user`, (req, res) => {
-//     res.send('Hello API');
-// });
+//render admin page
+app.get('/admin', (req, res) => {
+    if (req.session && req.session.user && req.session.user.userType === 'admin') {
+        res.render('admin.ejs', { user: req.session.user });
+    } else {
+        res.status(401).send('Access denied. Please login to view this page.');
+    }
+});
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STR)

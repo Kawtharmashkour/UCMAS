@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const { route } = require('./course');
 
 //Route to render the login page
 router.get("/login", (req,res) => {
@@ -29,8 +30,10 @@ router.post("/login", async (req, res) => {
                 res.redirect('/dashboard');  // Redirect to student dashboard
             } else if (user.userType === 'teacher') {
                 res.redirect('/dashboardTeacher');  // Redirect to teacher dashboard
+            } else if (user.userType === 'admin'){
+                res.redirect('/admin');
             } else {
-                res.redirect('/dashboard');  // Default redirect if role is not specified
+                res.status(401).send("Unknown user roll"); // Use HTTP 401 for Unknown user roll
             }
         } else {
             res.status(401).send("Incorrect password"); // Use HTTP 401 for incorrect credentials
@@ -74,6 +77,24 @@ router.post('/signup', async (req, res) => {
     }
 });
 
+// Student registers for a course
+router.post('/register-course', async (req, res) => {
+    try {
+        const { userId, courseId } = req.body;
+        const user = await User.findById(userId);
+        // Check if already registered before
+        if (user.courses.some(c => c.course.toString() === courseId)) {
+            return res.status(400).json({ message: "Already registered for this course" });
+        }
+        // Add course with pending status
+        user.courses.push({ course: courseId, status: 'pending' });
+        await user.save();
+
+        res.status(200).json({ message: "Registration pending approval" });
+    } catch (error) {
+        res.status(500).json({ message: "Error registering for course", error: error.message });
+    }
+});
 
 // Export the router
 module.exports = router;

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programs and Courses</title>
+</head>
+<body>
+    <h1>Programs and Courses</h1>
+    <div id="programsContainer"></div>
+
+    <h1>Programs and Courses</h1>
+    <div id="programsContainer"></div>
+    <hr>
+    <h2>Add Program</h2>
+    <form id="addProgramForm">
+        <label for="programName">Program Name:</label>
+        <input type="text" id="programName" name="programName">
+        <button type="submit">Add Program</button>
+    </form>
+
+    <script>
+       
+        // Usage
+        const program1 = new Program('Bachelor of Science');
+        const program2 = new Program('Master of Arts');
+        
+        const course1 = new Course('Computer Science');
+        const course2 = new Course('Physics');
+        const course3 = new Course('Mathematics');
+        
+        const student1 = new Student('Alice');
+        const student2 = new Student('Bob');
+        
+        course1.addStudent(student1);
+        course1.addStudent(student2);
+        
+        program1.add(course1);
+        program1.add(course2);
+        
+        program2.add(course3);
+
+        async function renderPrograms() {
+            const programsContainer = document.getElementById('programsContainer');
+            await program1.render(programsContainer);
+            await program2.render(programsContainer);
+        }
+
+        renderPrograms();
+    </script>
+    <script src="./../Js/program.js"></script>
+</body>
+</html>
