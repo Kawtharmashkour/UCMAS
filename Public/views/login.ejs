@@ -14,7 +14,7 @@
             <div class="col-md-6 side-image">
                      <!--Left Image-->
                      <div class="logo">
-                        <img src="/Assets/logo.webp" alt="logo">
+                        <a href="/"><img src="/Assets/logo.webp" alt="logo"></a>
                      </div>
                      <div class="girl">
                         <img src="/Assets/girl.webp" alt="girl">
@@ -26,6 +26,11 @@
             <div class="col-md-6 right">
                      <form class="input-box" action="/api/v1/user/login" method="POST">
                        <header> Log In</header>
+                       <% if (messages && messages.error.length > 0) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= messages.error %>
+                        </div>
+                    <% } %>
                        <div class="input-field">
                             <input type="text" class="input" name="email" id="email" required autocomplete="off">
                             <label for="email"> Email</label>
