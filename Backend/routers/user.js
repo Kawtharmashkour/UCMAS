@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const { Course } = require('../models/course');
 const { route } = require('./course');
 
 //Route to render the login page
@@ -171,6 +172,71 @@ router.post('/register-course', async (req, res) => {
     }
 });
 
+// API to retrieve all students with pending course registrations
+router.get('/students/pending', async (req, res) => {
+    try {
+        // Find all users with courses that have a status of 'pending'
+        const studentsWithPendingCourses = await User.find({
+            'courses.status': 'pending'
+        }).populate('courses.course');
+
+        // Filter and restructure the data to be more readable
+        const pendingRegistrations = studentsWithPendingCourses.map(user => ({
+            userId: user._id,
+            userName: `${user.firstName} ${user.lastName}`,
+            userEmail: user.email,
+            pendingCourses: user.courses.filter(course => course.status === 'pending').map(course => ({
+                courseId: course.course._id,
+                courseName: course.course.name,
+                registrationDate: course.registrationDate
+            }))
+        }));
+
+        res.status(200).json(pendingRegistrations);
+    } catch (error) {
+        console.error('Error fetching students with pending course registrations:', error);
+        res.status(500).json({ message: "Error fetching data", error: error.message });
+    }
+});
+
+// Route to approve a student's course registration
+router.post('/students/approve/:userId/:courseId', async (req, res) => {
+    const { userId, courseId } = req.params;
+    try {
+        const user = await User.findById(userId);
+        const course = user.courses.find(c => c.course.toString() === courseId);
+        if (course) {
+            course.status = 'registered'; // Change status to registered
+            await user.save();
+
+           // Add userId to course students only if not already present using ($addToSet:)
+            const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+                $addToSet: { students: userId }
+            }, { new: true });  // Returns the updated document
+
+            res.status(200).json({ message: 'Registration approved' });
+        } else {
+            res.status(404).send('Registration not found');
+        }
+    } catch (error) {
+        console.error('Error approving registration:', error);
+        res.status(500).send('Error approving registration');
+    }
+});
+
+// Route to delete a student's course registration
+router.delete('/students/delete/:userId/:courseId', async (req, res) => {
+    const { userId, courseId } = req.params;
+    try {
+        const user = await User.findById(userId);
+        user.courses = user.courses.filter(c => c.course.toString() !== courseId);
+        await user.save();
+        res.status(200).json({ message: 'Registration deleted' });
+    } catch (error) {
+        console.error('Error deleting registration:', error);
+        res.status(500).send('Error deleting registration');
+    }
+});
 
 
 // Export the router

@@ -80,6 +80,7 @@ class Course extends Component{
 
             const responseData = await response.json();
             if (response.ok) {
+                alert('New Course Created Successfully');
                 this.fetchCourses();
             } else {
                 console.error('Failed to create course:', responseData);
@@ -128,4 +129,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const programs = new Program('Program Manager');
     programs.fetchPrograms();
+
+    fetch('/api/v1/user/students/pending')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('pendingRegistrations');
+            data.forEach(student => {
+                const studentElement = document.createElement('div');
+                studentElement.innerHTML = `
+                    <h3>${student.userName} (${student.userEmail})</h3>
+                    <ul>
+                        ${student.pendingCourses.map(course => `
+                                <li>${course.courseName} - Registered on ${new Date(course.registrationDate).toLocaleDateString()}
+                                    <button onclick="approveRegistration('${student.userId}', '${course.courseId}')" class="btn btn-success btn-sm">Approve</button>
+                                    <button onclick="deleteRegistration('${student.userId}', '${course.courseId}')" class="btn btn-danger btn-sm">Delete</button>
+                                </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.appendChild(studentElement);
+            });
+        })
+        .catch(error => console.error('Error loading pending registrations:', error));
+
 });
+
+// functions
+function approveRegistration(userId, courseId) {
+    fetch(`/api/v1/user/students/approve/${userId}/${courseId}`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            alert('Registration approved!');
+            location.reload(); // Reload the page to update the list
+        })
+        .catch(error => {
+            console.error('Error approving registration:', error);
+            alert('Failed to approve registration.');
+        });
+}
+
+function deleteRegistration(userId, courseId) {
+    fetch(`/api/v1/user/students/delete/${userId}/${courseId}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            alert('Registration deleted!');
+            location.reload(); // Reload the page to update the list
+        })
+        .catch(error => {
+            console.error('Error deleting registration:', error);
+            alert('Failed to delete registration.');
+        });
+}
