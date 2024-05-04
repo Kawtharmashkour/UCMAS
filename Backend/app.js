@@ -52,10 +52,12 @@ app.set('view engine', 'ejs');
 const courseRouters = require('./routers/course');
 const programRouters = require('./routers/program');
 const userRouters = require('./routers/user');
+const gradeRouters = require('./routers/grade');
 
 app.use(`${api}/course`, courseRouters);
 app.use(`${api}/program`, programRouters);
 app.use(`${api}/user`, userRouters);
+app.use(`${api}/grade`, gradeRouters);
 
 // index rounte
 app.get('/', (req, res) => {
@@ -80,7 +82,8 @@ app.get('/dashboardTeacher', (req, res) => {
     }
 });
 
-// dashboardTeacher Route
+
+//render admin dashboard page
 app.get('/dashboardAdmin', (req, res) => {
     if (req.session && req.session.user && req.session.user.userType === 'admin') {
         res.render('dashboardAdmin', { user: req.session.user });
@@ -89,10 +92,6 @@ app.get('/dashboardAdmin', (req, res) => {
     }
 });
 
-
-// app.get(`${api}/user`, (req, res) => {
-//     res.send('Hello API');
-// });
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STR)
