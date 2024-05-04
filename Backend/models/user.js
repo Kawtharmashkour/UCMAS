@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
        type: String,
        required: true
     },
-
     firstName:{
         type: String,
         required: true
@@ -23,7 +22,22 @@ const userSchema = new mongoose.Schema({
     password:{
         type: String,
         required: true
-    }
+    },
+    courses: [{
+        course: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        },
+        status: {
+            type: String,
+            enum: ['pending', 'registered', 'completed'],
+            default: 'pending'
+        },
+        registrationDate: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 });
 
 //collection part

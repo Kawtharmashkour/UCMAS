@@ -34,5 +34,26 @@ router.get('/:id', async(req, res) =>{
 
 })
 
+// Route to create a new course
+router.post('/', async (req, res) => {
+    try {
+        const newCourse = new Course({
+            name: req.body.name,
+            program: req.body.program,
+            price: req.body.price,
+            maxAge: req.body.maxAge,
+            duration: req.body.duration,
+            startDate: new Date(req.body.startDate),
+            endDate: new Date(req.body.endDate),
+            program: req.body.program
+        });
+
+        const savedCourse = await newCourse.save();
+        res.status(201).send(savedCourse);
+    } catch (error) {
+        res.status(400).json({ message: "Error creating course", error: error.message });
+    }
+});
+
 //Exporting the whole module (file)
 module.exports = router;
