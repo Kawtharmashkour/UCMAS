@@ -52,10 +52,12 @@ app.set('view engine', 'ejs');
 const courseRouters = require('./routers/course');
 const programRouters = require('./routers/program');
 const userRouters = require('./routers/user');
+const gradeRouters = require('./routers/grade');
 
 app.use(`${api}/course`, courseRouters);
 app.use(`${api}/program`, programRouters);
 app.use(`${api}/user`, userRouters);
+app.use(`${api}/grade`, gradeRouters);
 
 // index rounte
 app.get('/', (req, res) => {
@@ -89,6 +91,7 @@ app.get('/dashboardAdmin', (req, res) => {
         res.status(401).send('Access denied. Please login to view this page.');
     }
 });
+
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECTION_STR)
